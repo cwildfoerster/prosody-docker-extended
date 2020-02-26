@@ -19,7 +19,7 @@ RUN set -x \
  && apt-key add /root/key && rm /root/key \
  && apt-get update -qq \
  && echo prosody-migrator${PROSODY_VERSION:--0.9} | sed -e 's/prosody-migrator-0.9//' \
-  | xargs apt-get install -qy telnet \
+  | xargs apt-get install -qy telnet gosu \
     apt-utils mercurial lua-sec lua-event lua-zlib lua-ldap \
     lua-dbi-mysql lua-dbi-postgresql lua-dbi-sqlite3 lua-bitop \
     prosody${PROSODY_VERSION} \
@@ -36,7 +36,7 @@ RUN set -x \
 
 VOLUME ["/etc/prosody", "/var/lib/prosody", "/var/log/prosody", "$PROSODY_MODULES", "$CUSTOM_MODULES"]
 
-USER prosody
+#USER prosody
 
 ENTRYPOINT ["/usr/bin/entrypoint.sh"]
 

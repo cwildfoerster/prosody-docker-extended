@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
-set -x
+#set -x
 
-if [[ $(id -u) -eq $(id -u prosody) ]]; then
+#if [[ $(id -u) -eq $(id -u prosody) ]]; then
     if [[ -z $(ls -A /etc/prosody | head -1) ]] ; then
         cp -Rv /etc/prosody.default/* /etc/prosody/
     fi
@@ -24,5 +24,19 @@ if [[ $(id -u) -eq $(id -u prosody) ]]; then
     if [[ $1 == "prosody" && -n $LOCAL &&  -n $PASSWORD && -n $DOMAIN ]]; then
         prosodyctl register $LOCAL $DOMAIN $PASSWORD
     fi
+#fi
+
+PUID=${PUID:-1000}
+PGID=${PGID:-1000}
+
+if [[ $PUID != 1000 || $PGID != 1000 ]]; then
+    userdel -f prosody
+    #groupdel prosody
+    groupadd -g $PGID -r prosody
+    useradd -b /var/lib -m -g $PGID -u $PUID -r -s /bin/bash prosody
 fi
-exec "$@"
+
+chown -R $PUID:$PGID /etc/prosody /var/lib/prosody /var/log/prosody
+chown $PUID:adm /var/run/prosody 
+
+exec gosu prosody "$@"

@@ -1,2 +1,6 @@
 *~
 *.swp
+docker-compose.yml
+config/
+data/
+log/
